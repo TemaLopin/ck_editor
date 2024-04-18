@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
-import './app.styled.js';
-import { EditorState, getVisibleSelectionRect, RichUtils } from 'draft-js';
+import { useState, useEffect, useMemo, useRef } from 'react'
+import './app.styled.js'
+import { EditorState, getVisibleSelectionRect, RichUtils } from 'draft-js'
 
 import {
   DraftContainer,
@@ -11,7 +11,7 @@ import {
   FontSelector,
   FontsList,
   FontsListButton,
-} from './app.styled.js';
+} from './app.styled.js'
 
 //бери нужные шрифты и кидай их в раздел со шрифтами в объект styleMap
 
@@ -21,7 +21,7 @@ const fonts = [
   { name: 'Ubuntu', style: 'UBUNTU_FF' },
   { name: 'Cantarell', style: 'CANTARELL_FF' },
   { name: 'Oxygen', style: 'OXYGEN_FF' },
-];
+]
 
 const styleMap = {
   CODE: {
@@ -40,7 +40,7 @@ const styleMap = {
   CANTARELL_FF: { fontFamily: '"Cantarell", sans-serif' },
   OXYGEN_FF: { fontFamily: '"Oxygen", sans-serif' },
   UBUNTU_FF: { fontFamily: '"Ubuntu", sans-serif' },
-};
+}
 
 const inlineTypes = [
   {
@@ -67,65 +67,52 @@ const inlineTypes = [
     icon: 'sub',
     style: 'SUBSCRIPT',
   },
-];
+]
 
 const EditorBar = ({ setEditorState, editorState, offset }) => {
   const [selectedFont, setSelectedFont] = useState({
     name: 'Roboto',
     style: 'ROBOTO_FF',
-  });
+  })
 
-  const [isFontsListOpen, setIsFontsListOpen] = useState(false);
+  const [isFontsListOpen, setIsFontsListOpen] = useState(false)
 
   useEffect(() => {
     fonts.forEach((item) => {
       if (isInlineActive(item.style)) {
-        setSelectedFont(item);
-        return;
+        setSelectedFont(item)
+        return
       }
-    });
-  }, []);
+    })
+  }, [])
 
-  const handleFontsListOpen = () => setIsFontsListOpen(!isFontsListOpen);
+  const handleFontsListOpen = () => setIsFontsListOpen(!isFontsListOpen)
 
-  const isInlineActive = (style) =>
-    editorState.getCurrentInlineStyle().has(style);
+  const isInlineActive = (style) => editorState.getCurrentInlineStyle().has(style)
 
   const isBlockActive = (block) => {
-    const selection = editorState.getSelection();
-    return (
-      block ===
-      editorState
-        .getCurrentContent()
-        .getBlockForKey(selection.getStartKey())
-        .getType()
-    );
-  };
+    const selection = editorState.getSelection()
+    return block === editorState.getCurrentContent().getBlockForKey(selection.getStartKey()).getType()
+  }
 
   const handleInlineStyleChange = (style, e) => {
-    e?.preventDefault();
-    setEditorState(RichUtils.toggleInlineStyle(editorState, style));
-  };
+    e?.preventDefault()
+    setEditorState(RichUtils.toggleInlineStyle(editorState, style))
+  }
 
   const handleBlockTypeChange = (block, e) => {
-    e?.preventDefault();
-    setEditorState(RichUtils.toggleBlockType(editorState, block));
-  };
+    e?.preventDefault()
+    setEditorState(RichUtils.toggleBlockType(editorState, block))
+  }
 
   const handleFontChange = (data) => {
-    const newEditorState = RichUtils.toggleInlineStyle(
-      editorState,
-      selectedFont.style
-    );
-    setEditorState(RichUtils.toggleInlineStyle(newEditorState, data.style));
-    setSelectedFont(data);
-  };
+    const newEditorState = RichUtils.toggleInlineStyle(editorState, selectedFont.style)
+    setEditorState(RichUtils.toggleInlineStyle(newEditorState, data.style))
+    setSelectedFont(data)
+  }
 
   return (
-    <EditorBarContainer
-      offset={offset}
-      onMouseDown={(evt) => evt.preventDefault()}
-    >
+    <EditorBarContainer offset={offset} onMouseDown={(evt) => evt.preventDefault()}>
       <EditorBarLine>
         <div>
           {inlineTypes.map(({ icon, style }) => (
@@ -172,78 +159,61 @@ const EditorBar = ({ setEditorState, editorState, offset }) => {
           )}
         </FontSelector>
         <div>
-          <EditorBarButton
-            onClick={(e) => handleInlineStyleChange('CODE', e)}
-            isSelected={isInlineActive('CODE')}
-          >
+          <EditorBarButton onClick={(e) => handleInlineStyleChange('CODE', e)} isSelected={isInlineActive('CODE')}>
             link
           </EditorBarButton>
         </div>
       </EditorBarLine>
     </EditorBarContainer>
-  );
-};
+  )
+}
 
 function App() {
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
-  const [isOpen, setIsOpen] = useState(false);
+  const [editorState, setEditorState] = useState(() => EditorState.createEmpty())
+  const [isOpen, setIsOpen] = useState(false)
 
-  const isCollapsed = useMemo(
-    () => editorState.getSelection().isCollapsed(),
-    [editorState]
-  );
+  const isCollapsed = useMemo(() => editorState.getSelection().isCollapsed(), [editorState])
 
-  const isGetHasFocus = useMemo(
-    () => editorState.getSelection().getHasFocus(),
-    [editorState]
-  );
+  const isGetHasFocus = useMemo(() => editorState.getSelection().getHasFocus(), [editorState])
 
-  const offset = useMemo(() => getVisibleSelectionRect(window), [editorState]);
+  const offset = useMemo(() => getVisibleSelectionRect(window), [editorState])
 
   useEffect(() => {
     if (!isGetHasFocus) {
-      setIsOpen(false);
-      return;
+      setIsOpen(false)
+      return
     }
 
     if (isCollapsed) {
-      setIsOpen(false);
+      setIsOpen(false)
     } else {
-      setIsOpen(true);
+      setIsOpen(true)
     }
-  }, [isCollapsed, isGetHasFocus]);
+  }, [isCollapsed, isGetHasFocus])
 
   return (
     <>
       <DraftContainer>
-        {isOpen && (
-          <EditorBar
-            editorState={editorState}
-            setEditorState={setEditorState}
-            offset={offset}
-          />
-        )}
+        {isOpen && <EditorBar editorState={editorState} setEditorState={setEditorState} offset={offset} />}
         {typeof window !== 'undefined' && (
           <StyledEditor
             editorState={editorState}
-            editorKey="CustomInlineToolbarEditor"
+            editorKey='CustomInlineToolbarEditor'
             onChange={(editorState) => setEditorState(editorState)}
             handleKeyCommand={(command, editorState) => {
-              const newState = RichUtils.handleKeyCommand(editorState, command);
+              const newState = RichUtils.handleKeyCommand(editorState, command)
               if (newState) {
-                setEditorState(newState);
-                return 'handled';
+                setEditorState(newState)
+                return 'handled'
               }
-              return 'not-handled';
+              return 'not-handled'
             }}
             customStyleMap={styleMap}
           />
         )}
       </DraftContainer>
     </>
-  );
+  )
 }
 
-export default App;
+export default App
